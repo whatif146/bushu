@@ -1,0 +1,451 @@
+/* ═══════════════════════════════════════════════════════════════
+   回顾 #/recap/:groupId —— 5 区块（design-spec §6.6 / §8.1）
+   选择器一律 .p-recap 开头；色值与字号全部走 tokens.css。
+   克制是这页的规矩：没有彩带、没有礼花、没有庆祝色块。
+   ═══════════════════════════════════════════════════════════════ */
+
+.p-recap{
+  background: var(--paper);
+  color: var(--ink);
+  padding-bottom: var(--sec-y);
+}
+.p-recap .p-recap__wrap{
+  max-width: var(--w-content);
+  margin-inline: auto;
+  padding-inline: var(--pad-x);
+  width: 100%;
+}
+
+/* ══════════ 页头（刊物页眉：编号 + H1 + 1px 线 + 退出口） ══════════ */
+.p-recap .p-recap__head{
+  position: relative;
+  padding-top: var(--s-7);
+  padding-bottom: var(--s-4);
+}
+.p-recap .p-recap__h1{
+  margin-top: var(--s-3);
+  font-size: var(--fs-h1);
+  line-height: var(--lh-snug);
+  letter-spacing: var(--ls-head);
+}
+.p-recap .p-recap__rule{
+  height: 1px;
+  margin-top: var(--s-4);
+  background: var(--ink);
+}
+.p-recap .p-recap__back{
+  position: absolute;
+  right: var(--pad-x);
+  bottom: var(--s-5);
+  font-size: var(--fs-sm);
+  color: var(--ink-2);
+  text-decoration: underline;
+  text-decoration-color: var(--ink-4);
+  text-underline-offset: 4px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+.p-recap .p-recap__back:hover{ color: var(--vermilion-deep); text-decoration-color: var(--vermilion-deep); }
+
+/* ══════════ 区块 1 · 一句话总结（墨底反色，全页唯一） ══════════ */
+.p-recap .p-recap__hero{
+  background: var(--ink);
+  color: var(--on-ink);
+}
+.p-recap .p-recap__hero-inner{
+  max-width: var(--w-content);
+  margin-inline: auto;
+  padding: var(--s-8) var(--pad-x);
+  min-height: 320px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--s-4);
+}
+.p-recap .p-recap__hero-eyebrow{
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--on-ink-3);
+}
+.p-recap .p-recap__hero-line{
+  max-width: 22ch;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: var(--fs-quote);
+  line-height: 1.45;
+  letter-spacing: -0.01em;
+  color: var(--on-ink);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.p-recap .p-recap__hero-meta{
+  font-size: var(--fs-sm);
+  color: var(--on-ink-2);
+  font-variant-numeric: tabular-nums;
+}
+.p-recap .p-recap__hero-note{
+  font-size: var(--fs-label);
+  color: var(--on-ink-3);
+}
+
+/* ══════════ 区块容器 ══════════ */
+.p-recap .p-recap__section{
+  padding-top: var(--s-8);
+}
+.p-recap .p-recap__section:last-child{ padding-bottom: 0; }
+
+/* ══════════ 区块 2 · 金句榜 ══════════ */
+.p-recap .p-recap__quotes{
+  margin-top: var(--s-5);
+  border-top: 1px solid var(--ink);
+}
+.p-recap .p-recap__quote{
+  position: relative;
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
+  gap: var(--s-2) var(--s-3);
+  align-items: start;
+  padding: var(--s-4) 0 var(--s-4) 0;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.p-recap .p-recap__quote.is-voted{
+  border-left: 3px solid var(--vermilion-deep);
+  padding-left: var(--s-3);
+}
+.p-recap .p-recap__quote-no{
+  padding-top: 4px;
+  font-size: var(--fs-label);
+  color: var(--ink-3);
+}
+.p-recap .p-recap__quote-body{ min-width: 0; }
+.p-recap .p-recap__quote-text{
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 18px;
+  line-height: 1.6;
+  color: var(--ink);
+}
+.p-recap .p-recap__quote-by{
+  margin-top: var(--s-1);
+  font-size: var(--fs-sm);
+  color: var(--ink-3);
+}
+.p-recap .p-recap__quote-bar{
+  display: block;
+  margin-top: var(--s-2);
+  height: 2px;
+  background: var(--paper-3);
+}
+.p-recap .p-recap__quote-bar-fill{
+  display: block;
+  height: 100%;
+  background: var(--vermilion);
+  transition: width var(--d-3) var(--ease-out);
+}
+.p-recap .p-recap__quote-side{
+  grid-column: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+  margin-top: var(--s-2);
+}
+.p-recap .p-recap__quote-votes{
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.p-recap .p-recap__quote-side .btn{ min-height: 44px; }
+
+/* ══════════ 区块 3 · 合影墙（6 个虚框，不做假上传） ══════════ */
+.p-recap .p-recap__photos{
+  margin-top: var(--s-5);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s-3);
+}
+.p-recap .p-recap__photo{
+  aspect-ratio: 4 / 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--s-3);
+  background: var(--paper-2);
+  border: 1px dashed var(--ink-4);
+}
+.p-recap .p-recap__photo-note{
+  font-size: var(--fs-label);
+  line-height: 1.5;
+  color: var(--ink-3);
+  text-align: center;
+}
+.p-recap .p-recap__photo-foot{
+  margin-top: var(--s-4);
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  flex-wrap: wrap;
+}
+.p-recap .p-recap__photo-hint{
+  font-size: var(--fs-label);
+  color: var(--ink-3);
+}
+
+/* ══════════ 区块 4 · 想续桌 ══════════ */
+.p-recap .p-recap__people{
+  margin-top: var(--s-5);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s-2);
+}
+.p-recap .p-recap__person{
+  position: relative;
+  min-height: 96px;
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  align-content: center;
+  gap: 2px var(--s-2);
+  padding: var(--s-3);
+  text-align: left;
+  background: var(--card);
+  border: 1px solid var(--ink-4);
+  transition: background var(--d-1) var(--ease-ink), color var(--d-1) var(--ease-ink);
+}
+.p-recap .p-recap__person-avatar{
+  grid-row: 1 / span 2;
+  width: 32px; height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+  background: var(--paper-2);
+  border: 1px solid var(--ink-4);
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 16px;
+  color: var(--ink-2);
+}
+.p-recap .p-recap__person-name{
+  font-size: var(--fs-body);
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.p-recap .p-recap__person-sub{
+  font-size: var(--fs-label);
+  color: var(--ink-3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.p-recap .p-recap__person.is-on{
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+.p-recap .p-recap__person.is-on .p-recap__person-avatar{
+  background: var(--ink);
+  border-color: var(--on-ink-3);
+  color: var(--paper);
+}
+.p-recap .p-recap__person.is-on .p-recap__person-sub{ color: var(--on-ink-2); }
+.p-recap .p-recap__person-check{
+  position: absolute;
+  top: 0; right: 0;
+  width: 24px; height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--vermilion-deep);
+  color: var(--card);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.p-recap .p-recap__reseat-foot{
+  margin-top: var(--s-4);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+  flex-wrap: wrap;
+}
+.p-recap .p-recap__reseat-count{
+  font-size: var(--fs-body);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.p-recap .p-recap__reseat-done{
+  font-size: var(--fs-body);
+  font-weight: 700;
+  color: var(--pine-2);
+}
+.p-recap .p-recap__reseat-hint{
+  margin-top: var(--s-2);
+  font-size: var(--fs-xs);
+  line-height: 1.6;
+  color: var(--ink-3);
+}
+
+/* ══════════ 区块 5 · 评价与再来 ══════════ */
+.p-recap .p-recap__form{
+  margin-top: var(--s-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+}
+.p-recap .p-recap__scale{
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+.p-recap .p-recap__scale-label{
+  padding: 0;
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--ink-2);
+}
+.p-recap .p-recap__scale-row{
+  margin-top: var(--s-2);
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+}
+.p-recap .p-recap__scale-end{
+  font-size: var(--fs-label);
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+.p-recap .p-recap__scale-btn{
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--ink);
+  background: var(--card);
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.p-recap .p-recap__scale-btn.is-on{
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.p-recap .p-recap__chips{
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+}
+.p-recap .p-recap__chip{
+  min-height: 44px;
+  padding: 0 var(--s-4);
+  border: 1px solid var(--ink);
+  background: transparent;
+  font-size: var(--fs-sm);
+  font-weight: 700;
+}
+.p-recap .p-recap__chip.is-on{
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.p-recap .p-recap__optional{ font-weight: 400; color: var(--ink-3); }
+.p-recap .p-recap__textarea{
+  min-height: 96px;
+  resize: vertical;
+}
+.p-recap .p-recap__err{
+  display: flex;
+  gap: var(--s-1);
+  font-size: var(--fs-xs);
+  line-height: 1.6;
+  color: var(--danger);
+  font-weight: 700;
+}
+.p-recap .p-recap__form-foot{ display: flex; }
+
+.p-recap .p-recap__done{
+  margin-top: var(--s-5);
+  padding: var(--s-5);
+  background: var(--paper-2);
+  border-left: 3px solid var(--pine-2);
+}
+.p-recap .p-recap__done-line{
+  font-size: var(--fs-body);
+  line-height: 1.7;
+  color: var(--ink);
+}
+.p-recap .p-recap__done-quote{
+  margin-top: var(--s-3);
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 18px;
+  line-height: 1.6;
+  color: var(--ink-2);
+}
+
+/* 再报一局：本页唯一 primary，靠右下 */
+.p-recap .p-recap__again{
+  margin-top: var(--s-7);
+  padding-top: var(--s-5);
+  border-top: 1px solid var(--ink);
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* ══════════ 散场前占位（design-spec 6.6 第 9 条） ══════════ */
+.p-recap .p-recap__lock{
+  margin-top: var(--s-6);
+  min-height: 170px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: var(--s-3);
+  padding: var(--s-5);
+  background: var(--paper-2);
+  border: 1px solid var(--ink);
+}
+.p-recap .p-recap__lock-line{
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: var(--fs-h3);
+  line-height: 1.3;
+}
+.p-recap .p-recap__lock-sub{
+  font-size: var(--fs-sm);
+  color: var(--ink-2);
+}
+
+/* ══════════ 平板 / 桌面 ══════════ */
+@media (min-width: 768px){
+  .p-recap .p-recap__hero-inner{
+    min-height: 420px;
+    padding-block: var(--s-9);
+  }
+  .p-recap .p-recap__hero-line{ max-width: 26ch; }
+  .p-recap .p-recap__photos{ grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .p-recap .p-recap__people{ grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .p-recap .p-recap__quote{
+    grid-template-columns: 40px minmax(0, 1fr) auto;
+    align-items: center;
+    min-height: 64px;
+  }
+  .p-recap .p-recap__quote-side{
+    grid-column: 3;
+    margin-top: 0;
+    justify-content: flex-end;
+  }
+  .p-recap .p-recap__quote-votes{ min-width: 48px; text-align: right; }
+}

@@ -1,0 +1,823 @@
+/* ═══════════════════════════════════════════════════════════════
+   现场引导 #/live/:groupId —— 375px 基准、单手可用（design-spec §6.5 / §8.2）
+   选择器一律 .p-live 开头；色值/字号/间距全部取自 tokens.css，不写死值。
+   唯一的例外是文件顶部两条 `body.is-live`：它必须挂在 body 上才能把
+   全站 Nav 与 Footer 藏掉（App.jsx 不在本文件的修改范围内）。
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── 全屏态：藏导航、锁滚动 ── */
+body.is-live{ overflow: hidden; }
+body.is-live .nav,
+body.is-live .site-footer{ display: none; }
+
+.p-live{
+  height: 100svh;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--paper);
+  color: var(--ink);
+}
+
+/* ══════════ 区块 1 · 顶条 56 + 2px 进度 ══════════ */
+.p-live .live__top{
+  flex: 0 0 56px;
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: 0 var(--s-3) 0 20px;
+}
+.p-live .live__table{
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: var(--ls-mono);
+  white-space: nowrap;
+}
+.p-live .live__count{
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: .06em;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+.p-live .live__chip{
+  flex: none;
+  min-height: 40px;
+  padding: 0 var(--s-3);
+  border: 1px solid var(--ink);
+  background: var(--card);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+}
+.p-live .live__chip:hover{ background: var(--ink); color: var(--paper); }
+.p-live .live__checked{
+  flex: none;
+  padding: 0 var(--s-2);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--pine-2);
+  white-space: nowrap;
+}
+.p-live .live__quit{
+  flex: none;
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink);
+}
+
+.p-live .live__progress{
+  flex: 0 0 2px;
+  background: var(--paper-3);
+}
+.p-live .live__progress-fill{
+  display: block;
+  height: 100%;
+  background: var(--vermilion-deep);
+  transition: width var(--d-3) var(--ease-out);
+}
+
+/* ══════════ 区块 2 · 舞台 ══════════ */
+.p-live .live__stage{
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 20px 0;
+}
+.p-live .live__stage--scroll{
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 12px;
+}
+
+/* ── 2A 卡牌堆（3D 翻面：perspective 在父级 / preserve-3d 在内层 / backface 两面） ── */
+.p-live .deck{
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 260px;
+  margin-bottom: 10px;
+  perspective: 1000px;
+  perspective-origin: 50% 50%;
+}
+.p-live .deck__under{
+  position: absolute;
+  left: 14px; right: 14px; bottom: -10px;
+  height: 12px;
+  background: var(--paper-2);
+  border: 1px solid var(--ink-4);
+  border-top: 0;
+}
+.p-live .deck__inner{
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform var(--d-4) var(--ease-ink);
+}
+.p-live .deck.is-flipped .deck__inner{ transform: rotateY(180deg); }
+.p-live .deck__face{
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 16px 18px;
+  background: var(--card);
+  border: 1px solid var(--ink);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+.p-live .deck__face--back{ transform: rotateY(180deg); }
+.p-live .deck__face--intro{ background: var(--paper-2); }
+
+.p-live .deck__seg{
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.p-live .deck__no{
+  margin-left: var(--s-2);
+  font-style: normal;
+  font-size: 11px;
+  color: var(--vermilion-deep);
+}
+
+.p-live .deck__hit{
+  flex: 1 1 auto;
+  min-height: 44px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-3);
+  text-align: center;
+  cursor: pointer;
+}
+.p-live .deck__face--back .deck__hit{ gap: var(--s-5); }
+
+.p-live .deck__text{
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1.28;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.p-live .deck__text--prompt{ font-size: 18px; font-weight: 700; line-height: 1.6; }
+.p-live .deck__intro{
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1.45;
+  letter-spacing: -0.01em;
+}
+.p-live .deck__hint{
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink-3);
+}
+.p-live .deck__by{
+  align-self: flex-end;
+  font-size: 12px;
+  color: var(--ink-3);
+}
+.p-live .deck__back-line{
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.75;
+  color: var(--ink);
+}
+
+/* 进度点：按段分组，点 4px（28 题在 335px 里放得下）、当前点朱红放大 */
+.p-live .deck__dots{
+  flex: 0 0 40px;
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+}
+.p-live .deck__dots-groups{
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  overflow: hidden;
+}
+.p-live .deck__dots-group{
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+.p-live .deck__dot{
+  width: 4px; height: 4px;
+  background: var(--paper-3);
+  transition: background var(--d-1) var(--ease-ink), transform var(--d-2) var(--ease-out);
+}
+.p-live .deck__dot.is-done{ background: var(--ink-4); }
+.p-live .deck__dot.is-on{
+  background: var(--vermilion);
+  transform: scale(1.5);
+}
+.p-live .deck__talked{
+  flex: none;
+  min-height: 44px;
+  padding: 0 var(--s-1);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink-3);
+  text-decoration: underline;
+  text-decoration-color: var(--ink-4);
+  text-underline-offset: 4px;
+  white-space: nowrap;
+}
+.p-live .deck__talked[aria-pressed="true"]{
+  color: var(--vermilion-deep);
+  text-decoration-color: var(--vermilion-deep);
+}
+
+/* 底部两个按钮：各 50%、56px、拇指区 */
+.p-live .deck__nav{
+  flex: 0 0 56px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--s-2);
+}
+.p-live .deck__nav .btn{
+  min-height: 56px;
+  padding: 0 var(--s-4);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+/* ── 2B 打卡表（搭子型） ── */
+.p-live .goal{ display: flex; flex-direction: column; gap: var(--s-4); }
+.p-live .goal__card{
+  border: 1px solid var(--ink);
+  background: var(--card);
+  padding: var(--s-4);
+}
+.p-live .goal__card-label{
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.p-live .goal__card-goal{
+  margin-top: var(--s-2);
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.4;
+}
+.p-live .goal__card-meta{
+  margin-top: var(--s-3);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2) var(--s-5);
+}
+.p-live .goal__card-meta div{ display: flex; gap: var(--s-2); align-items: baseline; }
+.p-live .goal__card-meta dt{
+  font-size: 12px;
+  color: var(--ink-3);
+}
+.p-live .goal__card-meta dd{
+  font-size: 18px;
+  font-weight: 700;
+}
+.p-live .goal__card-fields{
+  margin-top: var(--s-3);
+  padding-top: var(--s-3);
+  border-top: 1px solid var(--ink-4);
+  display: grid;
+  gap: var(--s-1);
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ink-2);
+}
+.p-live .goal__card-fields li::before{
+  content: "·";
+  margin-right: var(--s-2);
+  color: var(--ink-4);
+}
+.p-live .goal__today{
+  font-size: 18px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.p-live .goal__sheet{
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+.p-live .goal__head,
+.p-live .goal__row{
+  display: grid;
+  grid-template-columns: 48px repeat(7, minmax(0, 1fr));
+  gap: var(--s-1);
+  align-items: center;
+}
+.p-live .goal__day{
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-align: center;
+  color: var(--ink-3);
+}
+.p-live .goal__name{
+  font-size: 18px;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.p-live .goal__cell{
+  position: relative;
+  min-height: 40px;
+  border: 1px solid var(--ink-4);
+  background: var(--card);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--card);
+}
+/* 热区外扩（列宽受 335px 限制，横向只能到 ~41px，纵向够 44px） */
+.p-live .goal__cell::before{
+  content: "";
+  position: absolute;
+  inset: -2px -2px;
+}
+.p-live .goal__cell.is-on{
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+.p-live .goal__note{
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ink-3);
+}
+
+/* ── 2C 赛制页（竞技型） ── */
+.p-live .tour{ display: flex; flex-direction: column; gap: var(--s-5); padding-bottom: var(--s-2); }
+.p-live .tour__block{ display: flex; flex-direction: column; gap: var(--s-3); }
+.p-live .tour__title{
+  font-size: 18px;
+  font-weight: 700;
+  padding-bottom: var(--s-2);
+  border-bottom: 1px solid var(--ink);
+}
+.p-live .tour__warm{ display: flex; flex-direction: column; }
+.p-live .tour__warm-row{
+  width: 100%;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  text-align: left;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.p-live .tour__warm-box{
+  flex: none;
+  width: 24px; height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--ink-4);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-3);
+}
+.p-live .tour__warm-row.is-on .tour__warm-box{
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+.p-live .tour__warm-name{ flex: 1 1 auto; font-size: 18px; font-weight: 700; }
+.p-live .tour__warm-row.is-on .tour__warm-name{ color: var(--ink-3); text-decoration: line-through; }
+.p-live .tour__warm-min{
+  flex: none;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+.p-live .tour__rule{ font-size: 15px; line-height: 1.6; color: var(--ink-2); }
+.p-live .tour__matches{ display: flex; flex-direction: column; gap: var(--s-3); }
+.p-live .tour__match{
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: var(--s-2);
+  border: 1px solid var(--ink-4);
+  padding: var(--s-3);
+}
+.p-live .tour__match-label{
+  grid-column: 1 / -1;
+  font-size: 15px;
+  color: var(--ink-2);
+}
+.p-live .tour__side{
+  min-height: 44px;
+  border: 1px solid var(--ink);
+  background: var(--card);
+  font-size: 18px;
+  font-weight: 700;
+}
+.p-live .tour__side.is-on{ background: var(--ink); color: var(--paper); }
+.p-live .tour__vs{
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-3);
+}
+.p-live .tour__court{
+  grid-column: 1 / -1;
+  font-size: 12px;
+  font-family: var(--font-mono);
+  color: var(--ink-3);
+}
+.p-live .tour__score{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-3);
+}
+.p-live .tour__score-side{
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-2);
+}
+.p-live .tour__score-name{ font-size: 15px; font-weight: 700; color: var(--ink-2); }
+.p-live .tour__score-btns{ display: flex; align-items: center; gap: var(--s-2); }
+.p-live .tour__score-btn{
+  width: 44px; height: 44px;
+  border: 1px solid var(--ink);
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1;
+}
+.p-live .tour__score-btn:hover{ background: var(--ink); color: var(--paper); }
+.p-live .tour__score-num{
+  min-width: 40px;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 24px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.p-live .tour__score-colon{ font-size: 20px; color: var(--ink-4); }
+.p-live .tour__note{ font-size: 14px; line-height: 1.6; color: var(--ink-3); }
+.p-live .tour .btn{ min-height: 56px; font-size: 18px; }
+
+/* ── 2D 课程表（技能型） ── */
+.p-live .skill{ display: flex; flex-direction: column; gap: var(--s-3); padding-bottom: var(--s-2); }
+.p-live .skill__list{ display: flex; flex-direction: column; gap: var(--s-2); }
+.p-live .skill__item{
+  display: grid;
+  grid-template-columns: 76px 1fr;
+  gap: var(--s-3);
+  padding: var(--s-3);
+  border: 1px solid var(--ink-4);
+  border-left: 3px solid var(--ink-4);
+  background: var(--card);
+}
+.p-live .skill__item.is-now{
+  border-color: var(--ink);
+  border-left-color: var(--vermilion-deep);
+  background: var(--paper-2);
+}
+.p-live .skill__item.is-done{ opacity: .72; }
+.p-live .skill__time{ display: flex; flex-direction: column; gap: 2px; }
+.p-live .skill__no{
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: .06em;
+  color: var(--ink-3);
+}
+.p-live .skill__clock{
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-2);
+}
+.p-live .skill__body{ display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.p-live .skill__who{ font-size: 18px; font-weight: 700; }
+.p-live .skill__topic{ font-size: 15px; color: var(--ink-2); }
+.p-live .skill__output{ font-size: 15px; color: var(--ink-2); }
+.p-live .skill__min{ font-size: 12px; font-family: var(--font-mono); color: var(--ink-3); }
+.p-live .skill__now{
+  grid-column: 2;
+  justify-self: start;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  color: var(--vermilion-deep);
+}
+.p-live .skill__swap{
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--ink);
+  padding: var(--s-3);
+  background: var(--paper-2);
+  border-left: 3px solid var(--vermilion-deep);
+}
+.p-live .skill__note{ font-size: 14px; line-height: 1.6; color: var(--ink-3); }
+.p-live .skill .btn{ min-height: 56px; font-size: 18px; }
+
+/* ══════════ 区块 3–4 · 底部三层（引导句 25 + 卡条 96 + 安全条 44） ══════════ */
+.p-live .live__bottom{
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  padding: 0 20px calc(var(--s-2) + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid var(--ink);
+  background: var(--paper);
+}
+.p-live .live__lead-line{
+  padding-top: var(--s-3);
+  font-size: 18px;
+  line-height: 1.4;
+  color: var(--ink-2);
+}
+.p-live .live__strip{
+  flex: 0 0 96px;
+  display: flex;
+  gap: var(--s-2);
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+.p-live .live__person{
+  flex: 0 0 140px;
+  height: 96px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--s-3);
+  text-align: left;
+  background: var(--paper-2);
+  border: 1px solid var(--ink-4);
+  scroll-snap-align: start;
+}
+.p-live .live__person-name{
+  font-size: 15px;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.p-live .live__person-meta{
+  font-size: 12px;
+  color: var(--ink-3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.p-live .live__person-q{
+  margin-top: auto;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 12px;
+  color: var(--ink-2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.p-live .live__safety{
+  flex: 0 0 44px;
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: 0 var(--s-1) 0 var(--s-3);
+  background: var(--paper-2);
+}
+.p-live .live__safety-icon{
+  flex: none;
+  width: 12px; height: 12px;
+  border: 1px solid var(--ink-3);
+}
+.p-live .live__safety-text{
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 18px;
+  line-height: 1.2;
+  color: var(--ink-2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.p-live .live__safety-btn{
+  flex: none;
+  min-height: 44px;
+  padding: 0 var(--s-2);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  white-space: nowrap;
+}
+.p-live .live__safety-btn:hover{ color: var(--vermilion-deep); }
+.p-live .live__safety-btn--play{ color: var(--ink-2); font-weight: 500; }
+
+/* ══════════ 散场 / 未到点 / 找不到 ══════════ */
+.p-live--end,
+.p-live--blank{
+  justify-content: center;
+  align-items: center;
+  gap: var(--s-5);
+  padding: var(--s-6) 20px calc(var(--s-6) + env(safe-area-inset-bottom, 0px));
+}
+.p-live .live__end{
+  width: 100%;
+  max-width: 335px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+.p-live .live__end-eyebrow{
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.p-live .live__end-line{
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1.28;
+}
+.p-live .live__end-note{
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--ink-2);
+  margin-bottom: var(--s-3);
+}
+.p-live .live__end .btn{
+  min-height: 56px;
+  font-size: 18px;
+  font-weight: 700;
+}
+.p-live .live__end-exit{
+  align-self: flex-start;
+  min-height: 44px;
+  font-size: 15px;
+  color: var(--ink-3);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.p-live .live__blank-line{ font-size: 18px; color: var(--ink-2); }
+
+.p-live .live__lock{
+  width: 100%;
+  max-width: 335px;
+  min-height: 170px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s-3);
+  padding: var(--s-5);
+  background: var(--paper-2);
+  border: 1px solid var(--ink);
+}
+.p-live .live__lock-eyebrow{
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.p-live .live__lock-line{
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 24px;
+  line-height: 1.3;
+}
+.p-live .live__lock-sub{
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--ink-2);
+  margin-bottom: var(--s-2);
+}
+
+/* ══════════ 弹窗内部（Modal 复用 5.9） ══════════ */
+.p-live .live__modal-text{
+  font-size: 16px;
+  line-height: 1.75;
+  color: var(--ink-2);
+}
+.p-live .live__modal-list{
+  margin-top: var(--s-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--ink);
+  list-style: none;
+}
+.p-live .live__modal-list li{ position: relative; padding-left: var(--s-5); }
+.p-live .live__modal-list li::before{
+  content: "";
+  position: absolute;
+  left: 0; top: 10px;
+  width: 10px; height: 1px;
+  background: var(--ink-4);
+}
+.p-live .live__modal-quote{
+  margin-top: var(--s-3);
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 20px;
+  line-height: 1.6;
+}
+.p-live .live__modal-row{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--s-2);
+}
+.p-live .live__modal-row .btn{ min-height: 48px; }
+
+/* 6 格签到码 */
+.p-live .live__code{
+  position: relative;
+  display: block;
+  margin-top: var(--s-4);
+}
+.p-live .live__code-boxes{
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: var(--s-2);
+}
+.p-live .live__code-box{
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--ink);
+  background: var(--card);
+  font-family: var(--font-mono);
+  font-size: 22px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.p-live .live__code-box.is-filled{ background: var(--vermilion-tint); }
+.p-live .live__code-input{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  padding: 0;
+  opacity: 0;
+  font-size: 16px;      /* iOS 上 <16px 会触发缩放 */
+  letter-spacing: .4em;
+}
+.p-live .live__code-err{
+  margin-top: var(--s-2);
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ink-3);
+}
+.p-live .live__code-err.is-error{ color: var(--danger); font-weight: 700; }
+
+/* ══════════ 平板 / 桌面：420px 居中列，不做双栏、不放大 ══════════ */
+@media (min-width: 768px){
+  .p-live{
+    max-width: 420px;
+    margin-inline: auto;
+    border-inline: 1px solid var(--ink-4);
+  }
+}
+
+/* 窄屏（<360px）兜底：安全条让位，不出现横向滚动 */
+@media (max-width: 359px){
+  .p-live .live__safety-text{ font-size: 15px; }
+  .p-live .live__safety-btn{ font-size: 15px; padding: 0 var(--s-1); }
+  .p-live .deck__talked{ font-size: 13px; }
+}

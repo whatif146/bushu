@@ -1,0 +1,131 @@
+/* 设计 token —— 色彩块复制自 design-spec §2.1。
+   2026-10-20 追加 --mark（荧光笔）：只做「划重点」的底色，不进结构色、不用于文字、不做大面积填色。 */
+
+:root{
+  /* ── 纸 ── */
+  --paper:        #F2EDE3;  /* 页面主底 */
+  --paper-2:      #E8E1D3;  /* 次级面：区块底、表头、禁用态底 */
+  --paper-3:      #DDD4C2;  /* 三层面：按下态、轨道、选中前底 */
+  --card:         #FBF8F1;  /* 卡片面：比纸更白，靠这一点白分层 */
+  --on-ink:       #F2EDE3;  /* 反色区正文（墨底纸字） */
+  --on-ink-2:     #A89E90;  /* 反色区次文字，6.96:1 */
+  --on-ink-3:     #8B8276;  /* 反色区弱文字，4.86:1 */
+
+  /* ── 墨 ── */
+  --ink:          #17140F;  /* 主文字 / 所有边框 / 反色区底 */
+  --ink-2:        #4A443B;  /* 次文字：说明、导语 */
+  --ink-3:        #6A6155;  /* 弱文字：图注、meta（已从 #8B8276 下调，见 2.4） */
+  --ink-4:        #8B8276;  /* ⚠️ 非文字专用：装饰细线、图标描边、禁用文字 */
+
+  /* ── 朱红 ── */
+  --vermilion:        #D8351B;  /* 大字号(≥24px/粗18.66px)、大面积实心块、印章 */
+  --vermilion-deep:   #B92E14;  /* 小字、链接、主按钮底、焦点环 */
+  --vermilion-darker: #9E2610;  /* 主按钮 hover */
+  --vermilion-bright: #F04A26;  /* 深底上的强调、hover 细线；深底=ink */
+  --vermilion-tint:   #F6DED7;  /* 提示底、输入框聚焦晕 */
+
+  /* ── 荧光笔（≤5% 面积，只划重点：标题里的一两个词、卡片状态、当前步骤） ── */
+  --mark:      #E7FF57;
+  --mark-soft: rgba(231,255,87,.45);
+
+  /* ── 松绿（唯一辅助冷色，占比 ≤5%） ── */
+  --pine:      #1F3A34;  /* 反色小块、图表主色 */
+  --pine-2:    #276147;  /* 成功文字 */
+  --pine-tint: #E3EDE7;  /* 成功底 */
+
+  /* ── 语义 ── */
+  --ok:        #276147;  --ok-bg:     #E3EDE7;
+  --warn:      #8A5A00;  --warn-bg:   #F3E7C8;
+  --danger:    #B92E14;  --danger-bg: #F6DED7;
+  --info:      #1F3A34;  --info-bg:   #EEE7D9;
+
+  /* ── 线 / 影 / 焦点 ── */
+  --rule:          #17140F;              /* 结构线 1px */
+  --rule-soft:     rgba(23,20,15,.16);   /* 密集表格分隔线 */
+  --shadow-hard:      4px 4px 0 var(--ink);
+  --shadow-hard-sm:   2px 2px 0 var(--ink);
+  --shadow-hard-verm: 4px 4px 0 var(--vermilion);
+  --focus:         var(--vermilion-deep);    /* 纸底上的焦点环 */
+  --focus-on-ink:  var(--vermilion-bright);  /* 墨底上的焦点环 */
+}
+
+/* ── 字体栈（2026-10-21 换真字体：思源宋体做标题、思源黑体做正文、等宽做标签）
+   之前用系统字体，Windows 上会落到微软雅黑，标题没有骨架，怎么调字距都不高级。 */
+:root{
+  --font-display: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "SimSun", serif;
+  --font-body: "Noto Sans SC", "Source Han Sans SC", "PingFang SC",
+               "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --font-mono: "JetBrains Mono", "SF Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+  --font-serif: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "SimSun", Georgia, serif;
+}
+
+/* ── 字号阶梯（design-spec §3.2） ── */
+:root{
+  --fs-d1: clamp(44px, 8.4vw, 148px);
+  --fs-d2: clamp(36px, 5.6vw, 92px);
+  --fs-h1: clamp(34px, 4.2vw, 60px);
+  --fs-h2: clamp(28px, 2.9vw, 42px);
+  --fs-h3: clamp(22px, 1.8vw, 28px);
+  --fs-h4: clamp(18px, 1.3vw, 20px);
+  --fs-lead: clamp(17px, 1.5vw, 20px);
+  --fs-body: 16px;
+  --fs-sm: 14px;
+  --fs-xs: 13px;
+  --fs-label: 12px;
+  --fs-num: 12px;
+  --fs-quote: clamp(24px, 2.6vw, 36px);
+  --fs-bignum: clamp(56px, 7vw, 104px);
+  --lh-tight: .92; --lh-snug: 1.08; --lh-head: 1.16;
+  --lh-text: 1.75; --lh-ui: 1.4;
+  --ls-display: -.03em; --ls-head: -.02em; --ls-label: .18em; --ls-mono: .12em;
+}
+
+/* ── 间距（4.1） · 容器（4.2） ── */
+:root{
+  --s-0: 0px;    --s-1: 4px;    --s-2: 8px;
+  --s-3: 12px;   --s-4: 16px;   --s-5: 24px;
+  --s-6: 32px;   --s-7: 48px;   --s-8: 64px;
+  --s-9: 96px;   --s-10: 128px; --s-11: 160px; --s-12: 200px;
+
+  --w-page: 1600px;
+  --w-content: 1240px;
+  --w-measure: 720px;
+  --w-narrow: 560px;
+  --pad-x: 20px;
+  --gutter: 16px;
+  --sec-y: 64px;      /* 常规区块 padding-block */
+  --sec-y-ink: 72px;  /* 反色区块 padding-block */
+  --nav-h: 64px;
+}
+
+@media (min-width: 768px){
+  :root{ --pad-x:40px; --gutter:24px; --sec-y:96px; --sec-y-ink:112px; --nav-h:72px; }
+}
+@media (min-width:1024px){
+  :root{ --pad-x:64px; --gutter:24px; --sec-y:128px; --sec-y-ink:160px; }
+}
+@media (min-width:1440px){
+  :root{ --pad-x:96px; --gutter:32px; }
+}
+
+/* ── 规范正文出现、但 §2.1 变量块未单列的取值（集中在此，避免全站硬编码） ── */
+:root{
+  --vermilion-press: #8A2110;              /* §5.1 主按钮/危险按钮 active */
+  --ink-72:      rgba(23,20,15,.72);       /* §5.9 遮罩 */
+  --ink-90:      rgba(23,20,15,.90);       /* §5.9 面板硬影 */
+  --ink-28:      rgba(23,20,15,.28);       /* §5.10 Toast 硬影 */
+  --ink-06:      rgba(23,20,15,.06);       /* §5.4 导航滚动影（0 模糊） */
+  --on-ink-24:   rgba(242,237,227,.24);    /* §5.5 页脚底栏分隔线 */
+}
+
+/* ── 动效（5.0 / 7.x） ── */
+:root{
+  --ease-out:   cubic-bezier(.16,1,.3,1);
+  --ease-ink:   cubic-bezier(.65,0,.35,1);
+  --ease-stamp: cubic-bezier(.34,1.56,.64,1);
+  --d-1: 120ms;
+  --d-2: 200ms;
+  --d-3: 320ms;
+  --d-4: 560ms;
+  --d-5: 900ms;
+}

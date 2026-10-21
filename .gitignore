@@ -1,0 +1,13 @@
+node_modules
+dist
+.qa
+_shots
+*.log
+vite.config.js.timestamp-*
+.DS_Store
+
+# 本地临时脚本
+_*.mjs
+
+# 工作区记忆（本地保留，不进仓库）
+.workbuddy

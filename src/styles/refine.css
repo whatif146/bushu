@@ -1,0 +1,798 @@
+/* ══════════════════════════════════════════════════════════════════
+   refine.css —— 质感层（2026-10-20 第二轮）
+   只做「收敛」，不加新元素。目标是把「贴纸拼贴」的劲儿收成「印刷品」：
+   1) 颜色回到纸 / 墨 / 朱红三色，去掉荧光绿
+   2) 硬投影与 2px 粗线改为发丝线，阴影只留给浮层
+   3) 字距、行高、留白按印刷品的呼吸重排
+   4) 动效放慢、去掉位移弹跳
+   必须在所有页面样式之后引入（main.jsx 最后一行）。
+   ══════════════════════════════════════════════════════════════════ */
+
+:root{
+  --hair:        rgba(23, 20, 15, .14);
+  --hair-strong: rgba(23, 20, 15, .34);
+  --ease-quiet:  cubic-bezier(.22, .61, .36, 1);
+  --d-quiet:     240ms;
+}
+
+/* ── 1 · 排版：中文标题不要压字距，正文拉开行距 ───────────────── */
+h1, .sec-head__title, .p-hero__title{
+  letter-spacing: -.012em;
+}
+h2, h3{
+  letter-spacing: -.004em;
+}
+body, p{
+  text-wrap: pretty;
+}
+.p-hero__desc,
+.p-trust__quote p,
+.sec-head__sub{
+  line-height: 1.78;
+}
+
+@media (min-width: 1024px){
+  :root{
+    --sec-y: 152px;
+    --sec-y-ink: 176px;
+  }
+}
+
+/* ── 2 · 分隔线：2px 实线换成 1px 发丝线 ─────────────────────── */
+.sec-head::before{
+  height: 1px;
+  background: var(--hair);
+}
+.p-hero__foot-line{
+  background: var(--hair);
+}
+
+/* ── 3 · 划重点：荧光块换成「印刷用的下标线」，只留一点朱红 ──── */
+.p-landing .mark,
+.p-landing .mark--soft{
+  background: linear-gradient(transparent 86%, rgba(216, 53, 27, .18) 86%, rgba(216, 53, 27, .18) 96%, transparent 96%);
+}
+
+/* ── 4 · 卡片：去掉硬投影，回到发丝线 + 底色微差 ─────────────── */
+.p-landing .p-type,
+.p-landing .p-week__card{
+  border: 1px solid var(--hair);
+  box-shadow: none;
+  transition: border-color var(--d-quiet) var(--ease-quiet),
+              background-color var(--d-quiet) var(--ease-quiet),
+              transform var(--d-quiet) var(--ease-quiet);
+}
+.p-landing .p-type:hover{
+  transform: none;
+  border-color: var(--hair-strong);
+  background: var(--paper-2);
+}
+.p-landing .p-type:active{
+  transform: none;
+}
+/* 第一张类型卡不再铺荧光底，用「纸更深一档」区分 */
+.p-landing .p-types__track > li:first-child .p-type{
+  background: var(--paper-2);
+  border-color: var(--hair-strong);
+}
+/* 本周局主推卡：反过来用墨底纸字，比加投影更像「这一张重要」 */
+.p-landing .p-week__grid > li:first-child .p-week__card{
+  background: var(--ink);
+  color: var(--on-ink);
+  border-color: var(--ink);
+  box-shadow: none;
+}
+.p-landing .p-week__grid > li:first-child .p-week__card .p-week__title,
+.p-landing .p-week__grid > li:first-child .p-week__card .num{
+  color: var(--on-ink);
+}
+.p-landing .p-week__grid > li:first-child .p-week__card .p-week__meta,
+.p-landing .p-week__grid > li:first-child .p-week__card .p-week__type,
+.p-landing .p-week__grid > li:first-child .p-week__card .p-week__when{
+  color: var(--on-ink-2);
+}
+.p-landing .p-week__grid > li:first-child .p-week__card .p-week__rule{
+  background: var(--on-ink-24);
+}
+.p-landing .p-week__grid > li:first-child .p-week__card .p-week__remain{
+  color: var(--vermilion-bright);
+}
+.p-landing .p-week__grid > li:first-child .p-week__card .p-week__price{
+  color: var(--on-ink-2);
+}
+.p-landing .p-week__grid > li:first-child .p-week__card .btn--secondary{
+  border-color: var(--on-ink-24);
+  color: var(--on-ink);
+}
+.p-landing .p-week__grid > li:first-child .p-week__card .btn--secondary:hover{
+  background: var(--on-ink);
+  color: var(--ink);
+}
+
+/* ── 5 · 贴纸：不转了，做成印上去的小标签 ───────────────────── */
+.p-landing .p-sticker{
+  transform: none;
+  padding: 5px 10px;
+  background: var(--paper);
+  color: var(--ink);
+  border: 1px solid var(--ink);
+  box-shadow: none;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: .08em;
+}
+.p-landing .p-sticker.is-full{
+  background: var(--ink);
+  color: var(--on-ink);
+  border-color: var(--ink);
+}
+
+/* ── 6 · 按钮：不再位移，只换色；主按钮 hover 变深 ───────────── */
+.btn{
+  transition: background-color var(--d-quiet) var(--ease-quiet),
+              color var(--d-quiet) var(--ease-quiet),
+              border-color var(--d-quiet) var(--ease-quiet);
+  letter-spacing: .01em;
+}
+.btn--primary:hover{
+  box-shadow: none;
+  transform: none;
+}
+.btn--primary:active{
+  transform: none;
+}
+.btn__icon{
+  transition: transform var(--d-quiet) var(--ease-quiet);
+}
+
+/* ── 7 · 跑马灯：压低高度、放慢速度，像印刷厂的滚轴 ─────────── */
+.marquee{
+  height: 40px;
+}
+@media (min-width: 768px){
+  .marquee{ height: 44px; }
+}
+.marquee__track{
+  animation-duration: 64s;
+}
+.marquee__track--fast{
+  animation-duration: 48s;
+}
+.marquee__item{
+  letter-spacing: .04em;
+}
+
+/* ── 8 · 首屏：给竖排更多空气，数字与标签对齐 ───────────────── */
+@media (min-width: 1024px){
+  /* 竖排的字号交给可用高度，但别收到失去气势的程度：8.6vh 是「撑满一屏」和「留白」的中点 */
+  .p-landing .p-hero__line{
+    font-size: min(var(--fs-d2), 8.2vh);
+    line-height: 1.0;
+  }
+  /* 两列之间要能塞下一个字，不然 8vh 的竖排会挤成一块砖 */
+  .p-landing .p-hero__title{
+    gap: 44px;
+  }
+  /* 数字沉到首屏底部，和左侧长标题形成对角，中间的空白才是「留白」而不是「没排满」 */
+  .p-landing .p-hero__stats{
+    align-self: end;
+  }
+  .p-landing .p-hero__stat{
+    padding-block: var(--s-4);
+  }
+}
+
+/* ── 9 · 墨底区：文字色阶拉开，序号退到背景里 ───────────────── */
+.on-ink .p-trust__num{
+  opacity: .45;
+}
+.p-trust__title{
+  letter-spacing: 0;
+}
+
+/* ── 10 · 减少动效偏好 ─────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce){
+  .p-landing .p-type,
+  .p-landing .p-week__card,
+  .btn,
+  .btn__icon{
+    transition: none;
+  }
+}
+
+/* ── 11 · 收掉「多余的第二层线」与「台阶错落」─────────────────
+   卡片本身已经是发丝线框，里面再加一条线就是两层线；五步的错落会让五条横线
+   落在不同高度，看起来像没对齐而不是有节奏。 */
+.p-landing .p-type__foot{
+  border-top: 0;
+  padding-top: var(--s-3);
+}
+.p-landing .p-how__item:nth-child(even){
+  transform: none;
+}
+.p-landing .p-how__grid,
+.p-landing .p-how__list{
+  align-items: start;
+}
+/* 主推卡不再留半屏空白 */
+.p-landing .p-week__grid > li:first-child .p-week__card{
+  min-height: 0;
+  padding: var(--s-6);
+}
+
+/* ── 12 · 卡片高度收到内容量：188px 会让三行字下面空出半张卡 ── */
+.p-landing .p-type{
+  min-height: 172px;
+  padding: var(--s-5);
+}
+.p-landing .p-type__name{
+  margin-top: var(--s-2);
+  line-height: 1.25;
+}
+.p-landing .p-type__tagline{
+  margin-top: var(--s-2);
+  line-height: 1.55;
+}
+
+/* ── 13 · 类型卡底部信息：不要贴住正文，也不要拉到底 ───────── */
+.p-landing .p-type__foot{
+  margin-top: var(--s-4);
+  padding-top: 0;
+}
+/* 跑马灯的左右渐隐在 40px 高的细带上会显出一道浅色，去掉 */
+.p-landing .marquee::before,
+.p-landing .marquee::after{
+  display: none;
+}
+
+/* ── 14 · 实拍条：全幅、不加滤镜，只把说明压成一行小字 ──────── */
+.p-strip{
+  margin: var(--s-9) 0 0;
+  padding: 0;
+}
+.p-strip__img{
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1440 / 618;
+  object-fit: cover;
+}
+.p-strip__cap{
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--s-4);
+  padding-top: var(--s-3);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: .06em;
+  color: var(--ink-3);
+}
+
+/* ── 15 · 主推卡上的单色照片：只做质感，不抢字 ─────────────── */
+.p-week__card--photo{
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.p-week__photo{
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 55%;
+  filter: grayscale(1) contrast(1.06) brightness(.9);
+  opacity: .34;
+  mix-blend-mode: luminosity;
+  pointer-events: none;
+}
+.p-week__card--photo .p-week__title{
+  text-shadow: 0 1px 0 rgba(0, 0, 0, .25);
+}
+
+/* 图片来源署名：必须有，但只能是一行小字 */
+.site-footer__credit{
+  margin-top: var(--s-5);
+  font-size: 11px;
+  line-height: 1.7;
+  letter-spacing: .02em;
+  color: var(--on-ink-3);
+  max-width: 68em;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   16 · 真字体下的排版重校（2026-10-21）
+   思源宋体做标题、思源黑体做正文、JetBrains Mono 做标签。
+   宋体笔画比黑体细、字面更窄，沿用黑体那套 800 字重与负字距会「糊」，
+   所以：标题降到 600、字距回 0、行高抬到 1.2；正文改用真正的中文黑体。
+   ══════════════════════════════════════════════════════════════════ */
+body, .p-landing, .p-join, .p-me, .p-table, .p-live, .p-recap, .p-admin{
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3,
+.sec-head__title,
+.p-hero__line,
+.p-how__title,
+.p-week__title,
+.p-type__name,
+.p-trust__lead,
+.p-trust__title{
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+h1, .sec-head__title, .p-hero__line{
+  line-height: 1.18;
+}
+h3, .p-how__title, .p-week__title, .p-type__name{
+  line-height: 1.3;
+}
+
+/* 竖排标题：宋体竖排要略松，行距 1.0 会贴住 */
+.p-landing .p-hero__line{
+  line-height: 1.02;
+  letter-spacing: .01em;
+}
+
+/* 数字：宋体自带 old-style 没有，靠字重与字号做层级，不要合成斜体 */
+.p-hero__num,
+.num,
+.p-week__num{
+  font-family: var(--font-display);
+  font-style: normal;
+  font-weight: 500;
+  font-variant-numeric: lining-nums tabular-nums;
+  letter-spacing: .01em;
+}
+
+/* 标签/说明：等宽，减小一号，把「软件感」放在这些小字上 */
+.eyebrow,
+.p-admin__env,
+.p-types__kicker,
+.p-strip__cap,
+.p-join__count,
+.site-footer__slogan-en,
+.site-footer__bar{
+  font-family: var(--font-mono);
+  font-weight: 400;
+  letter-spacing: .1em;
+}
+
+/* 正文可读性：中文黑体 1.7 左右最舒服，字号抬到 16.5 */
+body, p, li, dd, dt{
+  font-size: 16.5px;
+  line-height: 1.72;
+}
+.p-hero__desc,
+.sec-head__sub{
+  font-size: 17px;
+  line-height: 1.75;
+  color: var(--ink-2);
+}
+
+/* ── 17 · 局卡：去掉第二道黑线，把「还剩几位」做成标签 ───────── */
+.p-landing .p-week__foot{
+  border-top: 0;
+  padding-top: var(--s-4);
+}
+.p-landing .p-week__remain{
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  margin-top: var(--s-3);
+  padding: 4px 10px;
+  border: 1px solid var(--hair-strong);
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: .06em;
+  line-height: 1.2;
+}
+.p-landing .p-week__remain.is-full{
+  border-color: var(--vermilion-deep);
+  color: var(--vermilion-deep);
+}
+.p-landing .p-week__grid > li:first-child .p-week__card .p-week__remain{
+  border-color: rgba(242, 237, 227, .4);
+  color: var(--on-ink);
+}
+.p-landing .p-week__grid > li:first-child .p-week__card .p-week__remain.is-full{
+  border-color: var(--vermilion-bright);
+  color: var(--vermilion-bright);
+}
+
+/* ── 18 · 区块间距：内容短的时候 152px 上下留白会空成事故 ───── */
+@media (min-width: 1024px){
+  :root{
+    --sec-y: 112px;
+    --sec-y-ink: 128px;
+  }
+}
+
+/* ── 19 · 标签与按钮的层级：标签是「信息」，按钮才是「动作」 ── */
+.p-landing .p-week__remain{
+  border: 0;
+  background: var(--paper-2);
+  color: var(--ink);
+  font-size: 11px;
+}
+.p-landing .p-week__remain.is-full{
+  background: var(--vermilion-tint);
+  color: var(--vermilion-deep);
+}
+.p-landing .p-week__grid > li:first-child .p-week__card .p-week__remain{
+  border: 0;
+  background: rgba(242, 237, 227, .12);
+  color: var(--on-ink-2);
+}
+.p-landing .p-week__grid > li:first-child .p-week__card .p-week__remain.is-full{
+  background: rgba(240, 74, 38, .18);
+  color: var(--vermilion-bright);
+}
+/* 卡片里的次级按钮：发丝线，hover 才反色 */
+.p-landing .p-week__card .btn--secondary{
+  border-color: var(--hair-strong);
+  min-height: 40px;
+  padding: 0 18px;
+  font-size: 13.5px;
+}
+.p-landing .p-week__card .btn--secondary:hover{
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   20 · 开一个（盲盒）
+   全站唯一的「玩」：点一下，盒子开、卡片升起来。纯 CSS 3D，不引库。
+   ══════════════════════════════════════════════════════════════════ */
+.p-box{
+  padding-block: var(--s-10);
+  border-top: 1px solid var(--hair);
+}
+.p-box__inner{
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 420px;
+  align-items: center;
+  gap: var(--s-9);
+}
+.p-box__title{
+  font-size: clamp(30px, 3.4vw, 46px);
+  line-height: 1.2;
+}
+.p-box__lead{
+  margin-top: var(--s-4);
+  max-width: 34em;
+  color: var(--ink-2);
+}
+.p-box__actions{
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-4);
+  margin-top: var(--s-6);
+}
+.p-box__btn{
+  min-height: 48px;
+  padding: 0 26px;
+  border: 1px solid var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+  font: 500 15px/1 var(--font-body);
+  cursor: pointer;
+  transition: background var(--d-quiet) var(--ease-quiet), color var(--d-quiet) var(--ease-quiet);
+}
+.p-box__btn:hover{
+  background: transparent;
+  color: var(--ink);
+}
+.p-box__note{
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: .06em;
+  color: var(--ink-3);
+}
+
+/* 舞台 */
+.p-box__stage{
+  position: relative;
+  height: 420px;
+  display: grid;
+  place-items: end center;
+  padding-bottom: 24px;
+  perspective: 1000px;
+}
+.p-box__box{
+  position: relative;
+  width: 200px;
+  height: 200px;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+  transform-style: preserve-3d;
+  transform: rotateX(14deg);
+  transition: transform var(--d-quiet) var(--ease-quiet);
+}
+.p-box__box::before{
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--ink);
+  box-shadow: 14px 14px 0 rgba(23, 20, 15, .16),
+              0 28px 44px -30px rgba(23, 20, 15, .55);
+}
+.p-box__box:hover{
+  transform: rotateX(10deg) translateY(-4px);
+}
+.p-box__lid{
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -14px;
+  height: 46px;
+  background: var(--vermilion);
+  transform-origin: 50% 100%;
+  transition: transform 420ms var(--ease-quiet);
+  z-index: 3;
+}
+.p-box__label{
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--paper);
+  font-family: var(--font-display);
+  font-size: 26px;
+  letter-spacing: .18em;
+  writing-mode: vertical-rl;
+  z-index: 2;
+}
+.p-box__shine{
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 40%, rgba(242, 237, 227, .16) 48%, transparent 56%);
+  opacity: 0;
+  transition: opacity var(--d-quiet) var(--ease-quiet);
+  z-index: 2;
+}
+.p-box__box:hover .p-box__shine{
+  opacity: 1;
+}
+.p-box__stage.is-opening .p-box__lid,
+.p-box__stage.is-open .p-box__lid{
+  transform: rotateX(-118deg);
+}
+
+/* 卡片：从盒子里升起来 */
+.p-box__card{
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 268px;
+  min-height: 190px;
+  padding: var(--s-5);
+  background: var(--paper);
+  border: 1px solid var(--ink);
+  display: grid;
+  gap: 6px;
+  top: auto;
+  bottom: 176px;
+  transform: translate(-50%, 26px) scale(.9) rotate(-2deg);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 460ms var(--ease-quiet), opacity 320ms var(--ease-quiet);
+  z-index: 4;
+  box-shadow: 0 30px 50px -34px rgba(23, 20, 15, .6);
+}
+.p-box__stage.is-open .p-box__card{
+  opacity: 1;
+  transform: translate(-50%, 0) scale(1) rotate(-1.2deg);
+  pointer-events: auto;
+}
+.p-box__card-no{
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: .12em;
+  color: var(--ink-3);
+}
+.p-box__card-name{
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+.p-box__card-tag{
+  font-size: 13px;
+  color: var(--ink-2);
+  line-height: 1.5;
+}
+.p-box__card-q{
+  margin-top: 4px;
+  padding-top: 10px;
+  border-top: 1px solid var(--hair);
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ink);
+}
+.p-box__card-cta{
+  margin-top: 6px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: .08em;
+  color: var(--vermilion-deep);
+  text-decoration: none;
+}
+.p-box__card-cta:hover{
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+@media (max-width: 1023px){
+  .p-box__inner{
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s-7);
+  }
+  .p-box__stage{
+    height: 340px;
+    order: -1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .p-box__lid,
+  .p-box__card,
+  .p-box__box{
+    transition-duration: 1ms;
+  }
+}
+
+.p-box__more{
+  color: var(--vermilion-deep);
+  text-decoration: none;
+  border-bottom: 1px solid currentColor;
+  padding-bottom: 2px;
+}
+.p-box__more:hover{ color: var(--ink); }
+
+/* ── 21 · 五步随滚动逐条点亮：闯关感，只做一次，不循环 ──────── */
+.p-landing .p-how__item{
+  opacity: .28;
+  transform: translateY(10px);
+  transition: opacity 520ms var(--ease-quiet), transform 520ms var(--ease-quiet);
+}
+.p-landing .p-how__item.is-in{
+  opacity: 1;
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce){
+  .p-landing .p-how__item{
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* 小屏标题：宋体字面宽，「五件事」被拆成两行不好看，缩一档 */
+@media (max-width: 767px){
+  .sec-head__title{
+    font-size: clamp(26px, 7.4vw, 34px);
+    line-height: 1.3;
+  }
+  .p-box__title{
+    font-size: clamp(26px, 7.2vw, 34px);
+  }
+}
+
+/* 标题断行：宁可两行齐，也不要在「五/件事」这种地方断 */
+.sec-head__title,
+.p-box__title{
+  text-wrap: balance;
+  line-break: strict;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   22 · 现场抽卡：牌堆有厚度、抽一张的时候牌是「出来」的
+   ══════════════════════════════════════════════════════════════════ */
+.p-live .deck__under--2{
+  left: 22px;
+  right: 22px;
+  bottom: -18px;
+  opacity: .75;
+}
+.p-live .deck__under--3{
+  left: 30px;
+  right: 30px;
+  bottom: -26px;
+  opacity: .5;
+}
+
+/* 换牌时重挂载 .deck__inner，动画播一次；不设 fill，翻面时的 rotateY 不受影响 */
+@keyframes deckIn{
+  from{
+    transform: translateY(18px) rotate(-1.6deg) scale(.985);
+    opacity: .2;
+  }
+  to{
+    transform: none;
+    opacity: 1;
+  }
+}
+.p-live .deck__inner{
+  animation: deckIn 320ms var(--ease-quiet);
+}
+
+.p-live .deck__left{
+  margin-top: var(--s-3);
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: .1em;
+  color: var(--ink-3);
+}
+
+@media (prefers-reduced-motion: reduce){
+  .p-live .deck__inner{
+    animation: none;
+  }
+}
+
+/* 牌背：抽到的牌先盖着，点一下才翻 */
+.p-live .deck__hit--cover{
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  background: transparent;
+  border: 0;
+}
+.p-live .deck__cover{
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-4);
+  background: var(--ink);
+  color: var(--paper);
+}
+.p-live .deck__cover-mark{
+  writing-mode: vertical-rl;
+  font-family: var(--font-display);
+  font-size: 34px;
+  letter-spacing: .22em;
+}
+.p-live .deck__cover-no{
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: .16em;
+  opacity: .55;
+}
+.p-live .deck__cover-hint{
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 18px;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: .1em;
+  color: var(--on-ink-2);
+}
+
+/* 翻开的牌上，「由谁先答」是提示，不该和题目一样重 */
+.p-live .deck__back-line{
+  margin-top: var(--s-5);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--ink-2);
+}

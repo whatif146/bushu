@@ -1,0 +1,262 @@
+/* 基线：reset · 纸张底 · 排版节奏 · 无障碍 · 动效降级
+   本文件只放「全站通用」的东西，组件样式一律进 components.css */
+
+*, *::before, *::after{ box-sizing: border-box; }
+
+html{
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+@media (prefers-reduced-motion: reduce){ html{ scroll-behavior: auto; } }
+
+body{
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 400 var(--fs-body)/var(--lh-text) var(--font-body);
+  letter-spacing: 0;               /* 中文正文必须 0 字距（§3.3 第 1 条） */
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+body.no-scroll{ overflow: hidden; }
+
+::selection{
+  background: var(--vermilion-deep);
+  color: var(--card);
+}
+
+h1, h2, h3, h4, h5, h6, p, figure, blockquote, dl, dd, ol, ul{
+  margin: 0;
+}
+ol, ul{ padding: 0; list-style: none; }
+
+a{
+  color: var(--vermilion-deep);
+  text-decoration: none;
+  text-underline-offset: 3px;
+}
+a:hover{ text-decoration: underline; }
+
+button, input, select, textarea{
+  font: inherit;
+  color: inherit;
+  letter-spacing: inherit;
+}
+button{ background: none; border: 0; padding: 0; cursor: pointer; }
+button:disabled{ cursor: not-allowed; }
+
+img, svg, video{ display: block; max-width: 100%; }
+svg{ flex: none; }
+
+hr{ border: 0; border-top: 1px solid var(--rule); margin: 0; }
+
+/* ── 焦点：纸底朱红环，墨底亮朱红环（§9.1.1） ── */
+:focus{ outline: none; }
+:focus-visible{
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+.on-ink :focus-visible,
+.on-ink:focus-visible{
+  outline-color: var(--focus-on-ink);
+}
+
+/* ── 无障碍工具类 ── */
+.sr-only{
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0 0 0 0); clip-path: inset(50%);
+  white-space: nowrap; border: 0;
+}
+.skip{
+  position: absolute; top: -100px; left: var(--pad-x);
+  z-index: 200;
+  display: inline-flex; align-items: center;
+  min-height: 44px; padding: 0 var(--s-5);
+  background: var(--ink); color: var(--paper);
+  font-size: var(--fs-sm); font-weight: 700;
+  text-decoration: none;
+}
+.skip:focus{ top: var(--s-3); text-decoration: none; }
+
+/* ── 版心与栅格（§4.2 / §4.3） ── */
+.wrap{
+  max-width: var(--w-page);
+  margin-inline: auto;
+  padding-inline: var(--pad-x);
+  width: 100%;
+}
+.wrap--content{ max-width: var(--w-content); }
+.wrap--narrow{ max-width: var(--w-narrow); }
+.measure{ max-width: var(--w-measure); }
+
+.grid{
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--gutter);
+}
+.col-1{grid-column: span 1} .col-2{grid-column: span 2} .col-3{grid-column: span 3}
+.col-4{grid-column: span 4} .col-5{grid-column: span 5} .col-6{grid-column: span 6}
+.col-7{grid-column: span 7} .col-8{grid-column: span 8} .col-9{grid-column: span 9}
+.col-10{grid-column: span 10} .col-11{grid-column: span 11} .col-12{grid-column: span 12}
+
+/* 平板以下一律单列（§8.1），宽屏才放行 12 栏 */
+@media (max-width: 1023px){
+  .grid{ grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .col-5, .col-6, .col-7, .col-8{ grid-column: span 6; }
+  .col-9, .col-10, .col-11, .col-12{ grid-column: span 6; }
+  .col-4{ grid-column: span 3; }
+  .col-3{ grid-column: span 3; }
+}
+@media (max-width: 767px){
+  .grid{ grid-template-columns: minmax(0, 1fr); gap: var(--gutter); }
+  .grid > *{ grid-column: span 1 !important; }
+}
+
+/* ── 纵向节奏 ── */
+.section{ padding-block: var(--sec-y); }
+.section--tight{ padding-block: calc(var(--sec-y) / 2); }
+.section--ink{ padding-block: var(--sec-y-ink); }
+
+/* ── 排版基线 ── */
+h1, h2, h3{ font-family: var(--font-display); font-weight: 800; }
+h1{ font-size: var(--fs-h1); line-height: var(--lh-snug); letter-spacing: -0.02em; }
+h2{ font-size: var(--fs-h2); line-height: var(--lh-head); letter-spacing: -0.02em; }
+h3{ font-size: var(--fs-h3); line-height: 1.28; letter-spacing: -0.01em; font-weight: 700; }
+h4{ font-size: var(--fs-h4); line-height: var(--lh-ui); font-weight: 700; }
+
+.lead{
+  font-size: var(--fs-lead);
+  line-height: 1.7;
+  color: var(--ink-2);
+}
+.muted{ color: var(--ink-2); }
+.weak{ color: var(--ink-3); }
+
+/* 英文小标：全大写 + 0.18em，只在 ≥12px 的 mono 上使用 */
+.eyebrow{
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+/* 区块编号 01–09 */
+.num{
+  font-family: var(--font-mono);
+  font-size: var(--fs-num);
+  font-weight: 500;
+  letter-spacing: var(--ls-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-3);
+}
+.tnum{ font-variant-numeric: tabular-nums; }
+
+.quote{
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: var(--fs-quote);
+  line-height: 1.5;
+}
+.bignum{
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: var(--fs-bignum);
+  line-height: .9;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── 反色区文字成套反转（§10.3），只覆盖文字与线，组件级反转在 components.css ── */
+.on-ink{
+  background: var(--ink);
+  color: var(--on-ink);
+}
+.on-ink .muted,
+.on-ink .lead{ color: var(--on-ink-2); }
+.on-ink .weak,
+.on-ink .num,
+.on-ink .eyebrow{ color: var(--on-ink-3); }
+.on-ink a{ color: var(--vermilion-bright); }
+.on-ink hr,
+.on-ink .rule{ border-color: var(--on-ink); }
+
+/* ── 颗粒层（§10.1）：只放一个，挂在 App 最外层 ── */
+.grain{
+  position: fixed; inset: 0;
+  z-index: 3;                 /* 必须 < Modal 的 100 */
+  pointer-events: none;
+  opacity: .045;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+}
+.on-ink .grain-static{ position: relative; }
+.on-ink .grain-static::after{
+  content: ""; position: absolute; inset: 0;
+  pointer-events: none;
+  opacity: .06; mix-blend-mode: screen;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n2'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n2)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+}
+
+/* ── 入场（§7.3） ── */
+@keyframes rise{
+  from{ opacity: 0; transform: translateY(8px); }
+  to  { opacity: 1; transform: translateY(0); }
+}
+.reveal{
+  animation: rise var(--d-3) var(--ease-out) both;
+  animation-delay: calc(var(--i, 0) * 60ms);
+}
+
+/* 页面切换：路由容器换 key 后重挂载。
+   这里只做 opacity，不用 translateY——带 transform 的祖先会让页内 position:fixed
+   （问卷底部操作条、移动端 CTA）退化成相对页面定位，这类坑不值得为 8px 位移去踩。 */
+@keyframes page-in{
+  from{ opacity: 0; }
+  to  { opacity: 1; }
+}
+.page{ animation: page-in var(--d-3) var(--ease-out) both; }
+
+/* ── 占位页（业务页由同事整页重写，这里只保证不白屏） ── */
+.stub{
+  padding-block: var(--sec-y);
+  min-height: 50vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+/* ── 动效降级（§7.7） ── */
+@media (prefers-reduced-motion: reduce){
+  *, *::before, *::after{
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .marquee__track{ animation: none !important; transform: none !important; }
+  .marquee{ justify-content: center; overflow: hidden; }
+  .reveal, .page{ opacity: 1 !important; transform: none !important; animation: none !important; }
+  .deck__inner{ transition: none !important; }
+  .deck.is-flipped .deck__inner{ transform: none; }
+  .deck__face--back{ transform: none; display: none; }
+  .deck.is-flipped .deck__face--front{ display: none; }
+  .deck.is-flipped .deck__face--back{ display: flex; }
+}
+
+/* ── 打印：去掉导航与颗粒 ── */
+@media print{
+  .nav, .site-footer, .grain, .modal, .toast, .skip{ display: none !important; }
+  body{ background: #fff; color: #000; }
+  a{ color: #000; }
+}
