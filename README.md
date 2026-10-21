@@ -193,6 +193,19 @@ FORMAT=jpeg QUALITY=86 node scripts/shot.mjs "http://127.0.0.1:4173/crop.html?sr
 - 种子日期是固定的（10-17 ~ 10-28）。种子重建时会把未开始场次的报名截止/匹配/解锁时间按「开始前 6h / 4h / 30min」重算，所以随时打开都能报名；但**场次本身过期后需要改日期**
 - 合影上传、真实二维码、支付、通知推送都不在本期
 
+## 产品说明书
+
+- `docs/产品说明书.md` —— 源文件（Markdown）
+- `docs/不熟局-产品说明书.pdf` —— A4 排版成品，9 页，含封面与页码
+- `docs/manual.html` —— 排版中间产物（改完 md 重新生成用）
+
+重新生成：
+
+```bash
+python scripts/manual-html.py      # md → 带 A4 样式的 html
+node scripts/manual-pdf.mjs        # html → pdf（无头 Chrome，带页码页脚）
+```
+
 ## 怎么分享出去（以及一个必须说清的限制）
 
 **能分享的**：`npm run build` 之后把 `dist/` 丢到任何静态托管（EdgeOne Pages / Vercel / 校园服务器都行），拿到一个链接就能发群、发公众号。页脚有「复制链接 / 发给同学」，手机上是系统分享面板。`public/og.png` 是 1200×630 的分享卡，微信抓图用。
