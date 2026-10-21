@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<title>不熟局 · 分享卡</title>
+<style>
+  :root{
+    --paper:#F2EDE3; --ink:#17140F; --ink-2:#4A443B;
+    --vermilion:#D8351B; --card:#FBF8F1; --mark:#E7FF57;
+  }
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  body{
+    width:1200px; height:630px; overflow:hidden;
+    background:var(--paper); color:var(--ink);
+    font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+    display:grid; grid-template-columns:1fr 360px;
+  }
+  .left{ padding:72px 64px; display:flex; flex-direction:column; justify-content:space-between; }
+  .brand{ display:flex; align-items:baseline; gap:12px; }
+  .brand b{ font-size:34px; letter-spacing:-.02em; }
+  .brand span{ font-family:Consolas,monospace; font-size:12px; letter-spacing:.24em; color:var(--ink-2); }
+  h1{ font-size:86px; line-height:1.06; letter-spacing:-.03em; font-weight:800; }
+  h1 em{ font-style:normal; background:linear-gradient(transparent 62%, var(--mark) 62%, var(--mark) 94%, transparent 94%); }
+  .sub{ margin-top:24px; font-size:24px; color:var(--ink-2); }
+  .meta{ display:flex; gap:32px; font-family:Consolas,monospace; font-size:15px; letter-spacing:.08em; color:var(--ink-2); }
+  .right{ background:var(--vermilion); color:var(--paper); padding:64px 48px; display:flex; flex-direction:column; justify-content:space-between; }
+  .right p{ font-size:22px; line-height:1.7; font-weight:700; }
+  .right small{ font-size:13px; line-height:1.9; letter-spacing:.06em; opacity:.85; }
+  .dot{ width:56px; height:56px; border-radius:50%; background:var(--mark); }
+</style>
+</head>
+<body>
+  <div class="left">
+    <div class="brand"><b>不熟局</b><span>BU SHU</span></div>
+    <div>
+      <h1>不熟的人，<br /><em>一起干件小事。</em></h1>
+      <p class="sub">报名不看脸，看你怎么说话。</p>
+    </div>
+    <div class="meta">
+      <span>广州大学城 · 10 校</span>
+      <span>16 种局</span>
+      <span>一桌 4–8 人</span>
+    </div>
+  </div>
+  <div class="right">
+    <div class="dot"></div>
+    <p>出发前 30 分钟<br />才知道去哪。</p>
+    <small>不谈恋爱 · 不推销<br />不承诺任何结果</small>
+  </div>
+</body>
+</html>

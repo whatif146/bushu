@@ -1,0 +1,888 @@
+/* 落地页私有样式。每条选择器以 .p-landing 开头，颜色/间距/字号全部取自 tokens.css。
+   版式依据 design-spec §6.1：移动优先写一遍，≥768 / ≥1024 逐级增强。 */
+
+.p-landing{
+  --hero-num: 28px;
+  --type-card-name: 18px;
+  --type-card-w: 220px;
+}
+
+/* 错版偏移：只用静态 text-shadow，不进动效分支（design-spec §8.4 / UI 定稿） */
+.p-landing .misreg{
+  text-shadow: -1px 0 var(--vermilion);
+}
+
+/* ── 2 · Hero ─────────────────────────────────────── */
+.p-landing .p-hero{
+  padding-top: var(--s-7);
+}
+.p-landing .p-hero__inner{
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-6);
+}
+.p-landing .p-hero__title{
+  font-size: var(--fs-d1);
+  line-height: 1.08;
+  letter-spacing: -.02em;
+  font-weight: 800;
+}
+.p-landing .p-hero__line{
+  display: block;
+  white-space: nowrap;
+}
+.p-landing .p-hero__sub{
+  font-size: var(--fs-body);
+  color: var(--ink-2);
+}
+.p-landing .p-hero__desc{
+  margin-top: var(--s-3);
+  max-width: 24em;
+  font-size: var(--fs-lead);
+  line-height: 1.7;
+  color: var(--ink-2);
+}
+.p-landing .p-hero__ctas{
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-3);
+  margin-top: var(--s-6);
+}
+.p-landing .p-arrow{
+  width: 16px;
+  height: 16px;
+}
+
+/* 移动端：版权页三个数字压成 1 行 3 列 */
+.p-landing .p-hero__stats{
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: 1px solid var(--ink);
+}
+.p-landing .p-hero__stat{
+  min-width: 0;
+  padding-top: var(--s-3);
+  padding-right: var(--s-2);
+}
+.p-landing .p-hero__stat + .p-hero__stat{
+  padding-left: var(--s-4);
+  border-left: 1px solid var(--rule-soft);
+}
+.p-landing .p-hero__stat .eyebrow{
+  font-size: 10px;
+  letter-spacing: .12em;
+}
+.p-landing .p-hero__num{
+  margin-top: var(--s-1);
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: var(--hero-num);
+  line-height: 1.1;
+  letter-spacing: -.01em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.p-landing .p-hero__foot{
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  margin-top: var(--s-7);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.p-landing .p-hero__foot-line{
+  flex: 1;
+  height: 1px;
+  background: var(--ink-28);
+}
+
+/* ── 3 · 跑马灯 ───────────────────────────────────── */
+.p-landing .marquee{
+  margin-top: var(--s-6);
+}
+/* 共享 Marquee 的 ○ 分隔符在这里换成 content-plan 要求的「 · 」，
+   词间距靠文案里的空格，gap 归零，避免换行处出现双间距。 */
+.p-landing .marquee__group{
+  gap: 0;
+  padding-right: 0;
+}
+.p-landing .marquee__sep{
+  font-size: 0;
+}
+.p-landing .marquee__sep::before{
+  content: " ／ ";
+  font-size: var(--fs-sm);
+  letter-spacing: 0;
+}
+
+/* ── 4 · 16 类局横滑带 ────────────────────────────── */
+.p-landing .p-types{
+  /* 轨道自身有 12px 下内边距，这里扣掉，让类型带到「05」的净间距正好 64px */
+  padding-block: var(--s-7) calc(var(--s-8) - var(--s-3));
+}
+.p-landing .p-types__inner{
+  position: relative;
+}
+/* 右侧渐隐：唯一可滑提示，替代裸露的滚动条 */
+.p-landing .p-types__inner::after{
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: var(--s-3);
+  width: 56px;
+  background: linear-gradient(to right, transparent, var(--paper));
+  pointer-events: none;
+}
+.p-landing .p-types__track{
+  display: flex;
+  gap: var(--s-4);
+  margin-inline: calc(var(--pad-x) * -1);
+  padding-inline: var(--pad-x);
+  padding-bottom: var(--s-3);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.p-landing .p-types__track::-webkit-scrollbar{
+  display: none;
+}
+.p-landing .p-types__track > li{
+  flex: 0 0 var(--type-card-w);
+  scroll-snap-align: start;
+}
+.p-landing .p-type{
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 188px;
+  padding: var(--s-5);
+  background: var(--card);
+  border: 1px solid var(--ink);
+  color: var(--ink);
+  text-decoration: none;
+  overflow: hidden;
+  transition: transform var(--d-2) var(--ease-out),
+              box-shadow var(--d-2) var(--ease-out);
+}
+.p-landing .p-type:hover{
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow-hard);
+  text-decoration: none;
+}
+.p-landing .p-type:focus-visible{
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+.p-landing .p-type.is-off{
+  opacity: .55;
+  pointer-events: none;
+}
+.p-landing .p-type__glyph{
+  font-family: var(--font-serif);
+  font-size: calc(var(--type-card-name) * 1.25);
+  line-height: 1;
+  color: var(--ink-4);
+  opacity: .65;
+}
+.p-landing .p-type__name{
+  margin-top: var(--s-3);
+  font-family: var(--font-display);
+  font-size: var(--type-card-name);
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: -.01em;
+}
+.p-landing .p-type__tagline{
+  margin-top: var(--s-2);
+  font-size: var(--fs-xs);
+  line-height: 1.65;
+  color: var(--ink-2);
+  /* 横滑带里卡片必须等高；tagline 单行省略（design-spec §5.15） */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.p-landing .p-type__foot{
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+  margin-top: auto;
+  padding-top: var(--s-4);
+  border-top: 1px solid var(--rule-soft);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: .06em;
+  color: var(--ink-3);
+}
+.p-landing .p-type__cat{
+  color: var(--ink-2);
+  letter-spacing: .12em;
+}
+.p-landing .p-type__next{
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── 5 · 一局怎么发生 ────────────────────────────── */
+.p-landing .p-how{
+  padding-top: 0;              /* 紧接类型带下边线，间距统一由类型带 padding-bottom 控制 */
+}
+.p-landing .p-how__kicker{
+  margin-bottom: var(--s-4);
+  font-size: var(--fs-xs);
+  color: var(--ink-3);
+}
+.p-landing .p-how__list{
+  display: grid;
+  gap: var(--s-6);
+  margin-top: var(--s-6);
+  padding-left: 40px;
+  border-left: 1px solid var(--ink);
+}
+.p-landing .p-how__item{
+  position: relative;
+}
+.p-landing .p-how__num{
+  position: absolute;
+  left: -40px;
+  top: 0;
+  width: 32px;
+  padding-block: 3px;
+  background: var(--paper);
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: var(--fs-num);
+  letter-spacing: var(--ls-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-3);
+}
+.p-landing .p-how__title{
+  font-size: var(--fs-h4);
+  font-weight: 700;
+  line-height: 1.4;
+}
+.p-landing .p-how__text{
+  margin-top: var(--s-2);
+  font-size: var(--fs-sm);
+  line-height: 1.7;
+  color: var(--ink-2);
+  text-wrap: balance;
+}
+
+/* ── 6 · 这周开的局 ─────────────────────────────── */
+.p-landing .p-week__grid{
+  display: grid;
+  gap: var(--s-6);
+  margin-top: var(--s-6);
+}
+.p-landing .p-week__card{
+  display: flex;
+  flex-direction: column;
+  min-height: 220px;
+  height: 100%;
+  padding: var(--s-5);
+  background: var(--card);
+  border: 1px solid var(--ink);
+}
+.p-landing .p-week__card:focus{
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+.p-landing .p-week__top{
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+}
+.p-landing .p-week__rule{
+  flex: 1;
+  height: 1px;
+  background: var(--rule-soft);
+}
+.p-landing .p-week__type{
+  font-size: var(--fs-label);
+  font-weight: 700;
+  letter-spacing: .06em;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+.p-landing .p-week__row{
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-3);
+  margin-top: var(--s-5);
+}
+.p-landing .p-week__title{
+  min-width: 0;
+  font-size: var(--fs-h4);
+  font-weight: 700;
+  line-height: 1.3;
+}
+.p-landing .p-week__when{
+  flex: none;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.p-landing .p-week__meta{
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  margin-top: var(--s-2);
+  font-size: var(--fs-sm);
+  color: var(--ink-2);
+}
+.p-landing .p-week__remain{
+  margin-top: var(--s-4);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.p-landing .p-week__remain.is-full{
+  color: var(--vermilion-deep);
+}
+.p-landing .p-week__wait{
+  font-weight: 400;
+  color: var(--ink-3);
+}
+.p-landing .p-week__foot{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+  margin-top: auto;
+  padding-top: var(--s-5);
+  border-top: 1px solid var(--ink);
+}
+.p-landing .p-week__price{
+  font-size: var(--fs-xs);
+  color: var(--ink-2);
+}
+
+/* ── 7 · 我们不打保票（墨底反色） ───────────────── */
+.p-landing .p-trust{
+  padding-block: var(--sec-y-ink);
+}
+.p-landing .p-trust__quote{
+  max-width: 26em;
+  margin-top: var(--s-7);
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: clamp(24px, 2.4vw, 26px);
+  line-height: 1.9;
+  color: var(--on-ink);
+}
+.p-landing .p-trust__quote p + p{
+  margin-top: var(--s-2);
+}
+.p-landing .p-trust__lead{
+  font-size: clamp(28px, 3.4vw, 36px);
+  font-style: normal;
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--on-ink);
+}
+.p-landing .p-trust__quote strong{
+  font-weight: 700;
+}
+.p-landing .p-trust__last{
+  margin-top: var(--s-5);
+  font-size: clamp(20px, 1.8vw, 22px);
+  font-style: normal;
+  line-height: 1.8;
+}
+.p-landing .p-trust__list{
+  display: grid;
+  gap: var(--s-6);
+  margin-top: var(--s-7);
+  padding-top: var(--s-6);
+  border-top: 1px solid var(--on-ink-24);
+}
+.p-landing .p-trust__num{
+  font-family: var(--font-mono);
+  font-size: var(--fs-num);
+  letter-spacing: var(--ls-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--on-ink-3);
+}
+.p-landing .p-trust__title{
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-2);
+  margin-top: var(--s-2);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--on-ink);
+}
+.p-landing .p-trust__check{
+  color: var(--vermilion-bright);
+  font-size: 15px;
+}
+.p-landing .p-trust__text{
+  margin-top: var(--s-2);
+  font-size: var(--fs-sm);
+  line-height: 1.8;
+  color: var(--on-ink-2);
+}
+
+/* ── 8 · 常见疑虑 ───────────────────────────────── */
+.p-landing .p-faq__list{
+  margin-top: var(--s-6);
+  border-top: 1px solid var(--ink);
+}
+.p-landing .p-faq__item{
+  border-bottom: 1px solid var(--ink);
+}
+.p-landing .p-faq__q{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-4);
+  min-height: 64px;
+  padding-block: var(--s-4);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.45;
+  cursor: pointer;
+  list-style: none;
+}
+.p-landing .p-faq__q::-webkit-details-marker{
+  display: none;
+}
+.p-landing .p-faq__q:hover{
+  color: var(--vermilion-deep);
+}
+.p-landing .p-faq__sign{
+  position: relative;
+  flex: none;
+  width: 20px;
+  height: 20px;
+}
+.p-landing .p-faq__sign::before,
+.p-landing .p-faq__sign::after{
+  content: "";
+  position: absolute;
+  background: var(--ink);
+  transition: transform var(--d-2) var(--ease-ink);
+}
+.p-landing .p-faq__sign::before{
+  left: 0;
+  top: 9px;
+  width: 20px;
+  height: 1.5px;
+}
+.p-landing .p-faq__sign::after{
+  left: 9px;
+  top: 0;
+  width: 1.5px;
+  height: 20px;
+}
+.p-landing .p-faq__item[open] .p-faq__sign::after{
+  transform: rotate(90deg);
+}
+.p-landing .p-faq__a{
+  max-width: var(--w-measure);
+  padding-bottom: var(--s-5);
+  font-size: var(--fs-body);
+  line-height: 1.8;
+  color: var(--ink-2);
+}
+.p-landing .p-faq__contact{
+  margin-top: var(--s-7);
+  padding-top: var(--s-5);
+  border-top: 1px solid var(--rule-soft);
+}
+.p-landing .p-faq__contact-text{
+  margin-top: var(--s-2);
+  font-size: var(--fs-sm);
+  line-height: 1.7;
+  color: var(--ink-2);
+}
+
+/* ── 移动端常驻 CTA（≥768px 隐藏） ───────────────── */
+.p-landing__cta{
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 35;
+  padding-inline: var(--pad-x);
+  padding-bottom: env(safe-area-inset-bottom);
+  background: var(--paper);
+  border-top: 1px solid var(--ink);
+  transform: translateY(110%);
+  transition: transform var(--d-2) var(--ease-out);
+}
+.p-landing__cta.is-shown{
+  transform: none;
+}
+.p-landing__cta-btn{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-2);
+  width: 100%;
+  height: 56px;
+  background: var(--vermilion-deep);
+  color: var(--card);
+  font-size: var(--fs-body);
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+/* 这枚按钮是手写的，不是 <Button>，箭头 SVG 没有尺寸约束会撑满整条按钮 */
+.p-landing__cta-btn svg{
+  width: 18px;
+  height: 18px;
+  flex: none;
+}
+.p-landing__cta-btn:hover{
+  background: var(--vermilion-darker);
+  text-decoration: none;
+}
+.p-landing__cta-btn:focus-visible{
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* ── 平板 768–1023 ─────────────────────────────── */
+@media (min-width: 768px){
+  .p-landing{
+    --hero-num: 32px;
+    --type-card-w: 260px;
+  }
+  /* 桌面与平板：轨道对齐常规内容列，不再向页边出血 */
+  .p-landing .p-types__track{
+    gap: var(--s-5);
+    margin-inline: 0;
+    padding-inline: 0;
+  }
+  .p-landing .p-types__inner::after{
+    right: var(--pad-x);
+  }
+  .p-landing .p-week__grid{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--s-6);
+  }
+  .p-landing__cta{
+    display: none;
+  }
+  .p-landing .p-trust__list{
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0;
+  }
+  .p-landing .p-trust__item{
+    padding-inline: var(--s-5);
+  }
+  .p-landing .p-trust__item:first-child{
+    padding-left: 0;
+  }
+  .p-landing .p-trust__item + .p-trust__item{
+    border-left: 1px solid var(--on-ink-24);
+  }
+}
+
+/* ── 桌面 ≥1024：Hero 真竖排（5 : 2 : 5 分栏） ──── */
+@media (min-width: 1024px){
+  .p-landing{
+    --hero-num: 44px;
+    --type-card-name: 20px;
+  }
+  .p-landing .p-hero{
+    padding-top: var(--s-8);
+  }
+  .p-landing .p-hero__inner{
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    align-items: start;
+    gap: var(--gutter);
+    min-height: 86svh;
+  }
+  .p-landing .p-hero__left{
+    grid-column: 1 / span 5;
+    display: block;
+    min-width: 0;
+  }
+  /* 竖排下移到每一列自己身上：flex row-reverse 让第一列落在右侧，
+     align-items:flex-start 让两列首字同高。容器只做排版，不承载 writing-mode。 */
+  .p-landing .p-hero__title{
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: flex-start;
+    justify-content: flex-end;   /* row-reverse 下 main-end = 左，两列靠左贴齐 */
+    width: max-content;
+    gap: 24px;
+    line-height: normal;
+  }
+  .p-landing .p-hero__line{
+    display: block;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    /* 8vh 是护栏：保证 7 字一列在 768–900 高的桌面屏上不把 CTA 顶出首屏 */
+    font-size: min(var(--fs-d2), 8vh);
+    line-height: .96;
+    letter-spacing: -.01em;
+    max-height: 62vh;
+    white-space: nowrap;
+  }
+  .p-landing .p-hero__lower{
+    max-width: 460px;
+    padding-top: var(--s-5);
+  }
+  .p-landing .p-hero__desc{
+    max-width: none;
+  }
+  .p-landing .p-hero__stats{
+    grid-column: 8 / span 5;
+    display: flex;
+    flex-direction: column;
+    border-top: 0;
+    /* 与竖排标题首字同顶对齐：居中的话右上方会留出一块三角形空白，像漏了一格 */
+    align-self: start;
+  }
+  .p-landing .p-hero__stat{
+    padding: var(--s-4) 0;
+    border-top: 1px solid var(--ink);
+    text-align: right;
+  }
+  .p-landing .p-hero__stat:last-child{
+    border-bottom: 1px solid var(--ink);
+  }
+  .p-landing .p-hero__stat + .p-hero__stat{
+    padding-left: 0;
+    border-left: 0;
+  }
+  .p-landing .p-hero__stat .eyebrow{
+    font-size: var(--fs-label);
+    letter-spacing: .18em;
+  }
+  .p-landing .p-hero__num{
+    margin-top: var(--s-2);
+  }
+  .p-landing .p-hero__foot{
+    margin-top: var(--s-8);
+  }
+  .p-landing .marquee{
+    margin-top: var(--s-8);
+  }
+  .p-landing .p-how__list{
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: var(--gutter);
+    padding-left: 0;
+    border-left: 0;
+  }
+  .p-landing .p-how__item{
+    padding-top: var(--s-6);
+    border-top: 2px solid var(--ink);
+  }
+  .p-landing .p-how__num{
+    left: 0;
+    top: calc(var(--s-6) * -1);
+    width: auto;
+    padding-right: var(--s-2);
+    padding-block: 2px;
+    text-align: left;
+  }
+  .p-landing .p-faq__q{
+    min-height: 72px;
+    font-size: 18px;
+  }
+}
+
+/* ── 宽屏 ≥1440 ────────────────────────────────── */
+@media (min-width: 1440px){
+  .p-landing .p-hero__left{
+    gap: var(--s-9);
+  }
+  .p-landing .p-hero__lower{
+    max-width: 420px;
+  }
+}
+
+/* ── 动效降级：marquee 与 CTA 位移都关掉 ────────── */
+@media (prefers-reduced-motion: reduce){
+  .p-landing__cta{
+    transition: none;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   青春化增量（2026-10-20）
+   三件事：划重点、贴纸、错落。不动纸墨基底与栅格。
+   ══════════════════════════════════════════════════════════ */
+
+/* 1 · 划重点：只给标题里的一两个词上底色，像用荧光笔划的 */
+.p-landing .mark{
+  background: linear-gradient(transparent 56%, var(--mark) 56%, var(--mark) 94%, transparent 94%);
+  padding: 0 .08em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+/* 2 · 类型卡：第一张放大当封面，悬停像被人从桌上拿起来看 */
+.p-landing .p-types__track > li:first-child{
+  flex-basis: calc(var(--type-card-w) * 1.6);
+}
+.p-landing .p-types__track > li:first-child .p-type{
+  background: var(--mark-soft);
+}
+.p-landing .p-type{
+  transition: transform var(--d-2) var(--ease-out),
+              box-shadow var(--d-2) var(--ease-out);
+}
+.p-landing .p-type:hover{
+  transform: translate(-2px, -6px) rotate(-.7deg);
+  box-shadow: var(--shadow-hard);
+}
+.p-landing .p-type:active{
+  transform: translate(0, 0) rotate(0);
+  box-shadow: var(--shadow-hard-sm);
+}
+
+/* 3 · 五步：台阶式下沉，别排成一条直线 */
+@media (min-width: 768px){
+  .p-landing .p-how__item:nth-child(even){
+    transform: translateY(var(--s-6));
+  }
+}
+
+/* 4 · 本周局：第一张横跨两列当主推，其余按小卡排 */
+@media (min-width: 768px){
+  .p-landing .p-week__grid > li:first-child{
+    grid-column: span 2;
+  }
+  .p-landing .p-week__grid > li:first-child .p-week__card{
+    min-height: 260px;
+    padding: var(--s-6);
+    box-shadow: var(--shadow-hard);
+  }
+  .p-landing .p-week__grid > li:first-child .p-week__title{
+    font-size: var(--fs-h2);
+  }
+  .p-landing .p-week__grid > li:first-child .p-week__meta{
+    font-size: var(--fs-body);
+  }
+}
+
+/* 5 · 贴纸：旋转的小圆标，用来标「还剩几位 / 已满」 */
+.p-landing .p-sticker{
+  position: absolute;
+  top: calc(var(--s-4) * -1);
+  right: var(--s-4);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  background: var(--vermilion);
+  color: var(--card);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: .02em;
+  transform: rotate(-4deg);
+  box-shadow: var(--shadow-hard-sm);
+  white-space: nowrap;
+}
+.p-landing .p-sticker.is-full{
+  background: var(--ink);
+}
+.p-landing .p-week__card{
+  position: relative;
+}
+
+/* 6 · 竖排里的句号：独占一格挂在列尾，等于给标题加了个悬空的黑点。
+   文案不动（读屏仍会念出句号），只在大字竖排里把它隐掉。 */
+.p-landing .p-hero__dot{
+  display: none;
+}
+
+/* 7 · 正文里的划重点要淡一点：整行正文用满强度会像「选中态」 */
+.p-landing .mark--soft{
+  background: linear-gradient(transparent 62%, var(--mark-soft) 62%, var(--mark-soft) 96%, transparent 96%);
+}
+
+/* 8 · 类型带：给一条引导 + 汉字当水印放右下，别再跟局名抢位置 */
+.p-landing .p-types__kicker{
+  margin-bottom: var(--s-4);
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  letter-spacing: .08em;
+  color: var(--ink-3);
+}
+.p-landing .p-type{
+  position: relative;
+}
+.p-landing .p-type__glyph{
+  position: absolute;
+  right: 10px;
+  bottom: 2px;
+  font-size: calc(var(--type-card-name) * 2.1);
+  line-height: 1;
+  color: var(--ink);
+  opacity: .08;
+  pointer-events: none;
+}
+.p-landing .p-type__name{
+  margin-top: 0;
+}
+
+/* 9 · 跑马灯两端加渐隐：本来就是无限滚，边缘被切一半时看起来像坏了 */
+.p-landing .marquee{
+  position: relative;
+}
+.p-landing .marquee::before,
+.p-landing .marquee::after{
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 72px;
+  z-index: 2;
+  pointer-events: none;
+}
+.p-landing .marquee::before{
+  left: 0;
+  background: linear-gradient(to right, var(--vermilion), rgba(216,53,27,0));
+}
+.p-landing .marquee::after{
+  right: 0;
+  background: linear-gradient(to left, var(--vermilion), rgba(216,53,27,0));
+}
+
+/* 10 · 手机上类型卡别铺满整屏：露出下一张的边，才看得出「还能滑」 */
+@media (max-width: 767px){
+  .p-landing .p-types__track > li:first-child{
+    flex-basis: calc(var(--type-card-w) * 1.12);
+  }
+  .p-landing .p-type{
+    min-height: 164px;
+    padding: var(--s-4);
+  }
+  .p-landing .p-type__glyph{
+    font-size: calc(var(--type-card-name) * 1.7);
+  }
+}
+
+/* 11 · 手机上贴纸会和「已满，可候补」那行重复，小屏收起来 */
+@media (max-width: 767px){
+  .p-landing .p-sticker{
+    display: none;
+  }
+}
+
+/* 12 · 按钮的箭头在 hover 时往前挪一点，是最省力的一次「活」 */
+.p-landing .btn__icon{
+  transition: transform var(--d-2) var(--ease-out);
+}
+.p-landing .btn:hover .btn__icon{
+  transform: translateX(3px);
+}
