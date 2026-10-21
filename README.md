@@ -1,9 +1,15 @@
 # 不熟局 BU SHU
 
+广州大学城的盲盒组局：不熟的人凑一桌，一起干件具体的小事。
+
+- **线上地址**：https://whatif146.github.io/bushu/
+- **代码仓库**：https://github.com/whatif146/bushu
+- **技术栈**：React 18 + Vite 5，手写 CSS（无 UI 框架），数据在 localStorage
+
 广州大学城（小谷围岛）校园盲盒组局平台。选一场局，填一份问卷，AI 在幕后把合适的人凑成一桌；**出发前 30 分钟才知道去哪，见面之后它就不出现了。**
 
 - 站点类型：工具站 + 落地页打法，核心转化动作只有一个：**提交报名**
-- 技术栈：Vite 5 + React 18，手写 hash 路由，**零额外依赖**、零外部图片/字体/图标库
+- 技术栈：Vite 5 + React 18，手写 hash 路由，**零 UI 框架依赖**；图片 2 张（Wikimedia CC BY-SA）、字体 3 族（思源宋体/黑体 + JetBrains Mono，Google Fonts CDN）
 - 数据：浏览器 `localStorage` 单键 `bushu.v1`（演示用假数据，不连接任何后端）
 - 视觉：纸（`#F2EDE3`）+ 墨（`#17140F`）+ 朱红（`#D8351E` 家族），圆角全局 0，硬边 + 硬影
 
